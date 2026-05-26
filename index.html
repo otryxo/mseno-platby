@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyhledávání</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 60px auto; padding: 0 20px; }
+    input { width: 100%; padding: 10px; font-size: 16px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+    button { width: 100%; padding: 10px; font-size: 16px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    #vysledek { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+    .uspech { background: #e8f5e9; border: 1px solid #4CAF50; }
+    .chyba { background: #ffebee; border: 1px solid #e53935; }
+  </style>
+</head>
+<body>
+  <h2>Vyhledání částky k zaplacení za Mšeno</h2>
+  <input type="email" id="email" placeholder="Zadejte váš email">
+  <button onclick="hledat()">Vyhledat</button>
+  <div id="vysledek"></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyFaiM23xuHd5Q4B8RtffE1c5cjIfW757imNJfU3REA3SioJaDtQ5UtR8Tkosfe5gFnlw/exec";
+
+    async function hledat() {
+      const email = document.getElementById("email").value.trim();
+      const div = document.getElementById("vysledek");
+
+      if (!email) {
+        div.style.display = "block";
+        div.className = "chyba";
+        div.innerHTML = "Zadejte prosím email.";
+        return;
+      }
+
+      div.style.display = "block";
+      div.className = "";
+      div.innerHTML = "Hledám...";
+
+      try {
+        const res = await fetch(API_URL + "?email=" + encodeURIComponent(email));
+        const data = await res.json();
+
+        if (data.nalezeno) {
+          div.className = "uspech";
+          div.innerHTML = `<strong>${data.jmeno}</strong><br>Částka: <strong>${data.castka}</strong>`;
+        } else {
+          div.className = "chyba";
+          div.innerHTML = "Email nebyl nalezen.";
+        }
+      } catch (e) {
+        div.className = "chyba";
+        div.innerHTML = "Chyba při komunikaci se serverem.";
+      }
+    }
+  </script>
+</body>
+</html>
