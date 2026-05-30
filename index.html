@@ -21,21 +21,21 @@
 <body>
 
   <h2>Vyhledání částky k zaplacení za Mšeno</h2>
-  <input type="text" id="jmenoInput" placeholder="Zadejte vaše jméno a příjmení">
+  <input type="tel" id="telefonInput" placeholder="Zadejte telefonní číslo">
   <button onclick="hledat()">Vyhledat</button>
   <div id="vysledek"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxWRDj4vyn6DC7a873AoEf9-lpWx04I31GnsYORUBoEzDS00muD6qkQ07lVHOkyuzOETQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyFaiM23xuHd5Q4B8RtffE1c5cjIfW757imNJfU3REA3SioJaDtQ5UtR8Tkosfe5gFnlw/exec";
 
     async function hledat() {
-      const jmeno = document.getElementById("jmenoInput").value.trim();
+      const telefon = document.getElementById("telefonInput").value.trim();
       const div = document.getElementById("vysledek");
 
-      if (!jmeno) {
+      if (!telefon) {
         div.style.display = "block";
         div.className = "chyba";
-        div.innerHTML = "Zadejte prosím jméno.";
+        div.innerHTML = "Zadejte prosím telefonní číslo.";
         return;
       }
 
@@ -44,7 +44,7 @@
       div.innerHTML = "Hledám...";
 
       try {
-        const res = await fetch(API_URL + "?jmeno=" + encodeURIComponent(jmeno));
+        const res = await fetch(API_URL + "?telefon=" + encodeURIComponent(telefon));
         const data = await res.json();
 
         if (data.nalezeno) {
@@ -59,7 +59,7 @@
           `;
         } else {
           div.className = "chyba";
-          div.innerHTML = "Jméno nebylo nalezeno.";
+          div.innerHTML = "Telefonní číslo nebylo nalezeno.";
         }
       } catch (e) {
         div.className = "chyba";
