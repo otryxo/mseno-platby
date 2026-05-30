@@ -5,16 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vyhledávání</title>
   <style>
-    body { font-family: sans-serif; max-width: 400px; margin: 60px auto; padding: 0 20px; }
+    body { font-family: sans-serif; max-width: 500px; margin: 60px auto; padding: 0 20px; }
     input { width: 100%; padding: 10px; font-size: 16px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
     button { width: 100%; padding: 10px; font-size: 16px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; }
     button:hover { background: #45a049; }
-    #vysledek { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+    #vysledek { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; line-height: 1.5; }
     .uspech { background: #e8f5e9; border: 1px solid #4CAF50; }
     .chyba { background: #ffebee; border: 1px solid #e53935; }
+    
+    /* Styl pro zobrazení řádku se záhlavím */
+    .vysledek-tabulka { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: white; }
+    .vysledek-tabulka th, .vysledek-tabulka td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .vysledek-tabulka th { background-color: #f2f2f2; width: 40%; }
+    
+    .qr-kod { display: block; margin-top: 15px; max-width: 100%; height: auto; }
   </style>
 </head>
 <body>
+
   <h2>Vyhledání částky k zaplacení za Mšeno</h2>
   <input type="email" id="email" placeholder="Zadejte váš email">
   <button onclick="hledat()">Vyhledat</button>
@@ -44,7 +52,17 @@
 
         if (data.nalezeno) {
           div.className = "uspech";
-          div.innerHTML = `<strong>${data.jmeno}</strong><br>Částka (CZK): <strong>${data.castka}</strong><BR>Částku prosím zaplať na účet 314335399/0300<BR>Do zprávy pro příjemce svoje jméno<BR>QR je na 1 CZK<BR><BR><img src="qrdavid.png">`;
+          
+          // Vygenerování tabulky ze všech vrácených dat kromě stavu "nalezeno"
+          const tabulkaHtml = vytvorTabulku(data);
+
+          div.innerHTML = `
+            ${tabulkaHtml}
+            Částku prosím zaplať na účet <strong>314335399/0300</strong>.<br>
+            Do zprávy pro příjemce uveď své jméno.<br><br>
+            <em>QR kód níže je nastaven na 1 Kč pro ověření:</em><br>
+            <img src="qrdavid.png" class="qr-kod" alt="QR kód">
+          `;
         } else {
           div.className = "chyba";
           div.innerHTML = "Email nebyl nalezen.";
@@ -53,6 +71,29 @@
         div.className = "chyba";
         div.innerHTML = "Chyba při komunikaci se serverem.";
       }
+    }
+
+    // Pomocná funkce, která převede JSON data na přehlednou tabulku klíč/hodnota
+    function vytvorTabulku(data) {
+      let html = '<table class="vysledek-tabulka">';
+      
+      // Definice mapování klíčů z API na české názvy záhlaví
+      const mapovaniZahlavi = {
+        "jmeno": "Jméno",
+        "email": "E-mail / Tel.",
+        "castka": "Celkem k zaplacení"
+      };
+
+      for (const klic in data) {
+        // Ignorujeme stavovou proměnnou z API response
+        if (klic === 'nalezeno') continue;
+
+        const nazevZahlavi = mapovaniZahlavi[klic] || klic;
+        html += `<tr><th>${nazevZahlavi}</th><td>${data[klic]}</td></tr>`;
+      }
+      
+      html += '</table>';
+      return html;
     }
   </script>
 </body>
