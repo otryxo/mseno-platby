@@ -24,7 +24,7 @@
 <body>
 
   <h2>Vyhledání částky k zaplacení za Mšeno</h2>
-  <input type="email" id="email" placeholder="Zadejte váš email">
+  <input type="text" id="jmenoInput" placeholder="Zadejte vaše jméno a příjmení">
   <button onclick="hledat()">Vyhledat</button>
   <div id="vysledek"></div>
 
@@ -32,13 +32,13 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyFaiM23xuHd5Q4B8RtffE1c5cjIfW757imNJfU3REA3SioJaDtQ5UtR8Tkosfe5gFnlw/exec";
 
     async function hledat() {
-      const email = document.getElementById("email").value.trim();
+      const jmeno = document.getElementById("jmenoInput").value.trim();
       const div = document.getElementById("vysledek");
 
-      if (!email) {
+      if (!jmeno) {
         div.style.display = "block";
         div.className = "chyba";
-        div.innerHTML = "Zadejte prosím email.";
+        div.innerHTML = "Zadejte prosím jméno.";
         return;
       }
 
@@ -47,13 +47,14 @@
       div.innerHTML = "Hledám...";
 
       try {
-        const res = await fetch(API_URL + "?email=" + encodeURIComponent(email));
+        // Parametr v URL změněn na "?jmeno="
+        const res = await fetch(API_URL + "?jmeno=" + encodeURIComponent(jmeno));
         const data = await res.json();
 
         if (data.nalezeno) {
           div.className = "uspech";
           
-          // Vygenerování tabulky ze všech vrácených dat kromě stavu "nalezeno"
+          // Vygenerování tabulky ze všech vrácených dat
           const tabulkaHtml = vytvorTabulku(data);
 
           div.innerHTML = `
@@ -65,7 +66,7 @@
           `;
         } else {
           div.className = "chyba";
-          div.innerHTML = "Email nebyl nalezen.";
+          div.innerHTML = "Jméno nebylo nalezeno. Zadejte ho přesně tak, jak je uvedeno v tabulce.";
         }
       } catch (e) {
         div.className = "chyba";
@@ -73,11 +74,10 @@
       }
     }
 
-    // Pomocná funkce, která převede JSON data na přehlednou tabulku klíč/hodnota
+    // Funkce převede JSON data na přehlednou tabulku s odpovídajícím záhlavím
     function vytvorTabulku(data) {
       let html = '<table class="vysledek-tabulka">';
       
-      // Definice mapování klíčů z API na české názvy záhlaví
       const mapovaniZahlavi = {
         "jmeno": "Jméno",
         "email": "E-mail / Tel.",
@@ -85,7 +85,6 @@
       };
 
       for (const klic in data) {
-        // Ignorujeme stavovou proměnnou z API response
         if (klic === 'nalezeno') continue;
 
         const nazevZahlavi = mapovaniZahlavi[klic] || klic;
