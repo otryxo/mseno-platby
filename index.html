@@ -12,12 +12,9 @@
     #vysledek { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; line-height: 1.5; }
     .uspech { background: #e8f5e9; border: 1px solid #4CAF50; }
     .chyba { background: #ffebee; border: 1px solid #e53935; }
-    
-    /* Styl pro zobrazení řádku se záhlavím */
     .vysledek-tabulka { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: white; }
     .vysledek-tabulka th, .vysledek-tabulka td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     .vysledek-tabulka th { background-color: #f2f2f2; width: 40%; }
-    
     .qr-kod { display: block; margin-top: 15px; max-width: 100%; height: auto; }
   </style>
 </head>
@@ -47,16 +44,12 @@
       div.innerHTML = "Hledám...";
 
       try {
-        // Parametr v URL změněn na "?jmeno="
         const res = await fetch(API_URL + "?jmeno=" + encodeURIComponent(jmeno));
         const data = await res.json();
 
         if (data.nalezeno) {
           div.className = "uspech";
-          
-          // Vygenerování tabulky ze všech vrácených dat
           const tabulkaHtml = vytvorTabulku(data);
-
           div.innerHTML = `
             ${tabulkaHtml}
             Částku prosím zaplať na účet <strong>314335399/0300</strong>.<br>
@@ -66,7 +59,7 @@
           `;
         } else {
           div.className = "chyba";
-          div.innerHTML = "Jméno nebylo nalezeno. Zadejte ho přesně tak, jak je uvedeno v tabulce.";
+          div.innerHTML = "Jméno nebylo nalezeno.";
         }
       } catch (e) {
         div.className = "chyba";
@@ -74,23 +67,12 @@
       }
     }
 
-    // Funkce převede JSON data na přehlednou tabulku s odpovídajícím záhlavím
     function vytvorTabulku(data) {
       let html = '<table class="vysledek-tabulka">';
-      
-      const mapovaniZahlavi = {
-        "jmeno": "Jméno",
-        "email": "E-mail / Tel.",
-        "castka": "Celkem k zaplacení"
-      };
-
       for (const klic in data) {
         if (klic === 'nalezeno') continue;
-
-        const nazevZahlavi = mapovaniZahlavi[klic] || klic;
-        html += `<tr><th>${nazevZahlavi}</th><td>${data[klic]}</td></tr>`;
+        html += `<tr><th>${klic}</th><td>${data[klic]}</td></tr>`;
       }
-      
       html += '</table>';
       return html;
     }
