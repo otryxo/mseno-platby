@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -55,7 +54,7 @@
             ${tabulkaHtml}
             Částku prosím zaplať na účet <strong>314335399/0300</strong>.<br>
             Do zprávy pro příjemce uveď své jméno.<br><br>
-            <em>QR kód níže je nastaven na 1 Kč pro ověření:</em><br>
+            <em>QR kód níže je nastaven na 1 Kč</em><br>
             <img src="qrdavid.png" class="qr-kod" alt="QR kód">
           `;
         } else {
@@ -72,7 +71,12 @@
       let html = '<table class="vysledek-tabulka">';
       for (const klic in data) {
         if (klic === 'nalezeno' || klic === 'hledalJsemPresne') continue;
-        html += `<tr><th>${klic}</th><td>${data[klic]}</td></tr>`;
+        
+        if (klic === 'celkem') {
+          html += `<tr><th>${klic}</th><td style="color: darkred; font-weight: bold;">${data[klic]}</td></tr>`;
+        } else {
+          html += `<tr><th>${klic}</th><td>${data[klic]}</td></tr>`;
+        }
       }
       html += '</table>';
       return html;
@@ -81,4 +85,3 @@
 </body>
 </html>
 
-```
