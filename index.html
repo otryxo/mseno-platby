@@ -73,7 +73,7 @@
         if (klic === 'nalezeno' || klic === 'hledalJsemPresne') continue;
         
         if (klic === 'celkem') {
-          html += `<tr><th>${klic}</th><td style="color: darkred; font-weight: bold;">${data[klic]}</td></tr>`;
+          html += `<tr><th>${klic} (Kč)</th><td style="color: darkred; font-weight: bold;">${data[klic]}</td></tr>`;
         } else {
           html += `<tr><th>${klic}</th><td>${data[klic]}</td></tr>`;
         }
