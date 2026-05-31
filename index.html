@@ -21,13 +21,13 @@
 </head>
 <body>
 
-  <h2>Vyhledání částky k zaplacení za Mšeno</h2>
+  <h2>Vyhledání částky k zaplacení za Mšeno (v2)</h2>
   <input type="tel" id="telefonInput" placeholder="Zadejte telefonní číslo">
   <button onclick="hledat()">Vyhledat</button>
   <div id="vysledek"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyFaiM23xuHd5Q4B8RtffE1c5cjIfW757imNJfU3REA3SioJaDtQ5UtR8Tkosfe5gFnlw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyUIZfCGJuKHSOwDcrWBAPTsiPu-OR4wyOIBkP0Nd7li3BHXFXxSSSHAxQYbm5cLt4lUw/exec";
 
     async function hledat() {
       const telefon = document.getElementById("telefonInput").value.trim();
